@@ -10,8 +10,15 @@ module MetaInspector
       end
 
       def best_title
-        @best_title = meta['og:title'] if @main_parser.host =~ /\.youtube\.com$/
+        @best_title = meta['og:title'] if meta['og:title']
         @best_title ||= find_best_title
+      end
+
+      # Returns the parsed site name title, from the contents of the several likely tags
+      # within the <head> section.
+      def best_site_name
+        @best_site_name = meta['og:site_name'] if meta['og:site_name']
+        @best_site_name ||= find_best_site_name
       end
 
       # A description getter that first checks for a meta description
@@ -32,6 +39,19 @@ module MetaInspector
             meta['og:title'],
             parsed.css('h1').first
         ]
+        find_best_candidate(candidates)
+      end
+
+      def find_best_site_name
+        candidates = [
+            meta['application-name'],
+            meta['og:site_name'],
+            parsed.css('h1').first
+        ]
+        find_best_candidate(candidates, sort_order: :shortest)
+      end
+
+      def find_best_candidate(candidates, sort_order: :longest)
         candidates.flatten!
         candidates.compact!
         candidates.map! { |c| (c.respond_to? :inner_text) ? c.inner_text : c }
@@ -39,7 +59,7 @@ module MetaInspector
         return nil if candidates.empty?
         candidates.map! { |c| c.gsub(/\s+/, ' ') }
         candidates.uniq!
-        candidates.sort_by! { |t| -t.length }
+        candidates.sort_by! { |t| (sort_order == :longest ? -1 : 1) * t.length }
         candidates.first
       end
 

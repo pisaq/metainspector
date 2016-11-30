@@ -45,7 +45,7 @@ module MetaInspector
 
     delegate [:content_type, :response]               => :@request
 
-    delegate [:parsed, :title, :best_title,
+    delegate [:parsed, :title, :best_title, :best_site_name,
               :description, :links,
               :images, :feed, :charset, :meta_tags,
               :meta_tag, :meta, :favicon,
@@ -54,22 +54,23 @@ module MetaInspector
     # Returns all document data as a nested Hash
     def to_hash
       {
-        'url'           => url,
-        'scheme'        => scheme,
-        'host'          => host,
-        'root_url'      => root_url,
-        'title'         => title,
-        'best_title'    => best_title,
-        'description'   => description,
-        'links'         => links.to_hash,
-        'images'        => images.to_a,
-        'charset'       => charset,
-        'feed'          => feed,
-        'content_type'  => content_type,
-        'meta_tags'     => meta_tags,
-        'favicon'       => images.favicon,
-        'response'      => { 'status'  => response.status,
-                             'headers' => response.headers }
+        'url'            => url,
+        'scheme'         => scheme,
+        'host'           => host,
+        'root_url'       => root_url,
+        'title'          => title,
+        'best_title'     => best_title,
+        'best_site_name' => best_site_name,
+        'description'    => description,
+        'links'          => links.to_hash,
+        'images'         => images.to_a,
+        'charset'        => charset,
+        'feed'           => feed,
+        'content_type'   => content_type,
+        'meta_tags'      => meta_tags,
+        'favicon'        => images.favicon,
+        'response'       => { 'status'  => response.status,
+                              'headers' => response.headers }
       }
     end
 
